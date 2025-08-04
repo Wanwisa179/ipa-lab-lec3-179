@@ -1,6 +1,6 @@
 from netmiko import ConnectHandler
 from dotenv import load_dotenv
-
+import re
 import os
 #import logging
 #logging.basicConfig(filename="ssh_log", level=logging.DEBUG) Just for loggin authen dont worry
@@ -22,8 +22,9 @@ def config_gen(cdpnei):
     for i in range(len(cdpnei)):
         local_interface = cdpnei[i]['local_interface'].replace(" ", "")
         remote_interface = cdpnei[i]['platform']+" "+cdpnei[i]['neighbor_interface']
-        neighbor = cdpnei[i]['neighbor_name'].replace(".ipa.com", "")
+        neighbor = re.sub(r'\..*', '', cdpnei[i]['neighbor_name'])
         config.append('int '+local_interface)
+        config.append('no description')
         config.append('des Connect to {} of {}'.format(remote_interface, neighbor))
         config.append('exit')
     return config
