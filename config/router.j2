@@ -1,0 +1,14 @@
+router ospf {{ ospf.process_id }} vrf {{ ospf.vrf }}
+{% for net in ospf.networks %}
+ network {{ net.ip }} {{ net.wildcard }} area {{ net.area }}
+{% endfor %}
+{% if ospf.default_originate %}
+ default-information originate
+{% endif %}
+exit
+no access-list 2
+{% for acl in access_list %}
+access-list 2 permit {{ acl }}
+{% endfor %}
+line vty 0 4
+access-class 2 in vrf-also

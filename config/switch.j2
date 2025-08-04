@@ -1,0 +1,15 @@
+vlan {{ vlan.id }}
+ name {{ vlan.name }}
+exit
+{% for intf in vlan.interfaces %}
+interface {{ intf }}
+ switchport mode access
+ switchport access vlan {{ vlan.id }}
+exit
+{% endfor %}
+no access-list 2
+{% for acl in access_list %}
+access-list 2 permit {{ acl }}
+{% endfor %}
+line vty 0 4
+access-class 2 in vrf-also
